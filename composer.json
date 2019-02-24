@@ -1,0 +1,34 @@
+{
+    "name": "zyglab/plates-forms",
+    "description": "A simple Plates extension to generate forms",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^8.0",
+        "vimeo/psalm": "^3.0",
+        "league/plates": "^3.3"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Éber Freitas Dias",
+            "email": "eber.freitas@gmail.com"
+        }
+    ],
+    "require": {
+        "ext-xml": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zyglab\\Plates\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Zyglab\\Plates\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --bootstrap vendor/autoload.php tests",
+        "analyse": "vendor/bin/psalm"
+    }
+}
