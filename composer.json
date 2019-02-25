@@ -28,7 +28,7 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit --bootstrap vendor/autoload.php tests",
+        "test": "vendor/bin/phpunit --bootstrap vendor/autoload.php --coverage-text --whitelist tests tests",
         "analyse": "vendor/bin/psalm"
     }
 }

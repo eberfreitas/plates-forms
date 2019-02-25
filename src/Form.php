@@ -69,18 +69,28 @@ class Form implements ExtensionInterface
 
     /**
      * @param string $label
-     * @param string|null $name
+     * @param string $name
      * @param string|null $id
      *
      * @return string
      */
-    public function label(string $label, ?string $name = null, ?string $id = null): string
+    public function label(string $label, string $name = null, ?string $id = null): string
     {
         if ($name && !$id) {
             $id = Utils::camelize($name);
         }
 
         return Utils::format($this->getTemplate('label'), compact('label', 'id'));
+    }
+
+    /**
+     * @param array $errors
+     *
+     * @return void
+     */
+    public function setErrors(array $errors): void
+    {
+        $this->errors = $errors;
     }
 
     /**
@@ -103,67 +113,6 @@ class Form implements ExtensionInterface
         $params['errors'] = join('', $params['errors']);
 
         return Utils::format($this->getTemplate('error'), $params);
-    }
-
-    /**
-     * @param string $name
-     * @param array $params
-     *
-     * @return string
-     */
-    public function input(string $name, array $params = []): string
-    {
-        $defaultParams = [
-            'class' => '',
-            'extra' => '',
-            'id' => null,
-            'name' => $name,
-            'type' => 'text',
-            'value' => null,
-        ];
-
-        $params = $this->makeParams($defaultParams, $params);
-
-        return Utils::format($this->getTemplate('input'), $params);
-    }
-
-    /**
-     * @param string $label
-     * @param string $name
-     * @param array $params
-     *
-     * @return string
-     */
-    public function select(string $label, string $name, array $params = []): string
-    {
-        $defaultParams = [
-            'class' => '',
-            'extra' => '',
-            'id' => null,
-            'name' => $name,
-            'options' => [],
-            'value' => null,
-        ];
-
-        $params = $this->makeParams($defaultParams, $params);
-        $options = [];
-
-        foreach ($params['options'] as $k => $option) {
-            $opt = Utils::format($this->getTemplate('select_option'), ['value' => $k, 'option' => $option]);
-
-            if ($params['value'] == $k) {
-                $elm = simplexml_load_string($opt);
-                $elm->addAttribute('selected', 'selected');
-
-                $opt = $elm->asXML();
-            }
-
-            $options[] = $opt;
-        }
-
-        $params['options'] = join('', $options);
-
-        return Utils::format($this->getTemplate('select'), $params);
     }
 
     /**
@@ -206,20 +155,85 @@ class Form implements ExtensionInterface
 
     /**
      * @param string $name
+     * @param array $params
+     *
+     * @return string
+     */
+    public function input(string $name, array $params = []): string
+    {
+        $defaultParams = [
+            'class' => '',
+            'extra' => '',
+            'id' => null,
+            'name' => $name,
+            'type' => 'text',
+            'value' => null,
+        ];
+
+        $params = $this->makeParams($defaultParams, $params);
+
+        return Utils::format($this->getTemplate('input'), $params);
+    }
+
+    /**
+     * @param string $name
+     * @param array $params
+     *
+     * @return string
+     */
+    public function select(string $name, array $params = []): string
+    {
+        $defaultParams = [
+            'class' => '',
+            'extra' => '',
+            'id' => null,
+            'name' => $name,
+            'options' => [],
+            'value' => null,
+        ];
+
+        $params = $this->makeParams($defaultParams, $params);
+        $options = [];
+
+        foreach ($params['options'] as $k => $option) {
+            $opt = Utils::format($this->getTemplate('select_option'), ['value' => $k, 'option' => $option]);
+
+            if ($params['value'] == $k) {
+                $dom = new \DOMDocument();
+
+                $dom->loadHTML($opt, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+                $option = $dom->getElementsByTagName('option')->item(0);
+
+                if (!$option) {
+                    continue;
+                }
+
+                $attr = $dom->createAttribute('selected');
+
+                $attr->value = 'selected';
+
+                $option->appendChild($attr);
+
+                $opt = str_replace("\n", '', $dom->saveHTML());
+            }
+
+            $options[] = $opt;
+        }
+
+        $params['options'] = join('', $options);
+
+        return Utils::format($this->getTemplate('select'), $params);
+    }
+
+    /**
+     * @param string $name
      *
      * @return string
      */
     protected function getTemplate(string $name): string
     {
         return $this->userDefinedTemplates[$name] ?? $this->defaultTemplates[$name] ?? '';
-    }
-
-    /**
-     * @return void
-     */
-    public function resetTemplates(): void
-    {
-        $this->userDefinedTemplates = [];
     }
 
     /**
@@ -231,6 +245,16 @@ class Form implements ExtensionInterface
     public function setTemplate(string $name, string $template): void
     {
         $this->userDefinedTemplates[$name] = $template;
+    }
+
+    /**
+     * @var array $array
+     *
+     * @return void
+     */
+    public function setRequestData(array $array): void
+    {
+        $this->requestData = $array;
     }
 
     /**
@@ -246,19 +270,17 @@ class Form implements ExtensionInterface
     /**
      * @return void
      */
-    public function resetDefaultData(): void
+    public function resetRequestData(): void
     {
-        $this->defaultData = [];
+        $this->requestData = [];
     }
 
     /**
-     * @param array $errors
-     *
      * @return void
      */
-    public function setErrors(array $errors): void
+    public function resetDefaultData(): void
     {
-        $this->errors = $errors;
+        $this->defaultData = [];
     }
 
     /**
@@ -267,5 +289,24 @@ class Form implements ExtensionInterface
     public function resetErrors(): void
     {
         $this->errors = [];
+    }
+
+    /**
+     * @return void
+     */
+    public function resetTemplates(): void
+    {
+        $this->userDefinedTemplates = [];
+    }
+
+    /**
+     * @return void
+     */
+    public function reset(): void
+    {
+        $this->resetRequestData();
+        $this->resetDefaultData();
+        $this->resetErrors();
+        $this->resetTemplates();
     }
 }
