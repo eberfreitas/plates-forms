@@ -215,7 +215,13 @@ class Form implements ExtensionInterface
 
                 $option->appendChild($attr);
 
-                $opt = str_replace("\n", '', $dom->saveHTML());
+                $html = $dom->saveHTML();
+
+                if (!$html) {
+                    continue;
+                }
+
+                $opt = str_replace("\n", '', $html);
             }
 
             $options[] = $opt;

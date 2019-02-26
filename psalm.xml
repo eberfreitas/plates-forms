@@ -35,7 +35,11 @@
 
         <PropertyNotSetInConstructor errorLevel="info" />
         <MissingConstructor errorLevel="info" />
-        <MissingClosureParamType errorLevel="info" />
+        <MissingClosureParamType>
+            <errorLevel type="suppress">
+                <file name="src/Form.php" />
+            </errorLevel>
+        </MissingClosureParamType>
         <MissingParamType errorLevel="info" />
 
         <RedundantCondition errorLevel="info" />
