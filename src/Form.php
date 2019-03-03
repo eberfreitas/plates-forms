@@ -30,7 +30,7 @@ class Form implements ExtensionInterface
         'error' => '<div class="errors"><ul>{errors}</ul></div>',
         'error_item' => '<li>{error}</li>',
         'input' => '<input type="{type}" name="data[{name}]" id="{id}" value="{value}" class="{class}"{extra}>',
-        'select' => '<div class="select"><select name="data[{name}]" id="{id}" class="{class}"{extra}>{options}</select></div>',
+        'select' => '<select name="data[{name}]" id="{id}" class="{class}"{extra}>{options}</select>',
         'select_option' => '<option value="{value}">{option}</option>',
     ];
 

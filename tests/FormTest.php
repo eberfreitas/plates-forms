@@ -118,7 +118,7 @@ class FormTest extends TestCase
         $select = $this->form->select('test', $params);
 
         $this->assertEquals(
-            '<div class="select"><select name="data[test]" id="Test" class=""><option value="1">Option One</option><option value="2">Option Two</option></select></div>',
+            '<select name="data[test]" id="Test" class=""><option value="1">Option One</option><option value="2">Option Two</option></select>',
             $select
         );
 
@@ -127,7 +127,7 @@ class FormTest extends TestCase
         $select = $this->form->select('test', $params);
 
         $this->assertEquals(
-            '<div class="select"><select name="data[test]" id="Test" class=""><option value="1" selected>Option One</option><option value="2">Option Two</option></select></div>',
+            '<select name="data[test]" id="Test" class=""><option value="1" selected>Option One</option><option value="2">Option Two</option></select>',
             $select
         );
     }
