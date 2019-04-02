@@ -201,7 +201,7 @@ class Form implements ExtensionInterface
             if ($params['value'] == $k) {
                 $dom = new \DOMDocument();
 
-                $dom->loadHTML($opt, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+                $dom->loadHTML($opt);
 
                 $option = $dom->getElementsByTagName('option')->item(0);
 
@@ -215,7 +215,7 @@ class Form implements ExtensionInterface
 
                 $option->appendChild($attr);
 
-                $html = $dom->saveHTML();
+                $html = $dom->saveHTML($option);
 
                 if (!$html) {
                     continue;
