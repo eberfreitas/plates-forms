@@ -2,6 +2,8 @@
 
 namespace Zyglab\Plates;
 
+use const ARRAY_FILTER_USE_BOTH;
+use DOMDocument;
 use League\Plates\Engine;
 use League\Plates\Extension\ExtensionInterface;
 
@@ -40,8 +42,8 @@ class Form implements ExtensionInterface
     protected $userDefinedTemplates = [];
 
     /**
+     * Form constructor.
      * @param array $requestData
-     *
      * @return void
      */
     public function __construct(array $requestData = [])
@@ -51,7 +53,6 @@ class Form implements ExtensionInterface
 
     /**
      * @param Engine $engine
-     *
      * @return void
      */
     public function register(Engine $engine): void
@@ -69,9 +70,8 @@ class Form implements ExtensionInterface
 
     /**
      * @param string $label
-     * @param string $name
+     * @param string|null $name
      * @param string|null $id
-     *
      * @return string
      */
     public function label(string $label, string $name = null, ?string $id = null): string
@@ -85,8 +85,6 @@ class Form implements ExtensionInterface
 
     /**
      * @param array $errors
-     *
-     * @return void
      */
     public function setErrors(array $errors): void
     {
@@ -95,7 +93,6 @@ class Form implements ExtensionInterface
 
     /**
      * @param string $name
-     *
      * @return string
      */
     public function error(string $name): string
@@ -118,14 +115,13 @@ class Form implements ExtensionInterface
     /**
      * @param array $defaultParams
      * @param array $params
-     *
      * @return array
      */
     protected function makeParams(array $defaultParams, array $params): array
     {
         $extra = array_filter($params, function($v, $k) use ($defaultParams): bool {
             return !in_array($k, array_keys($defaultParams));
-        }, \ARRAY_FILTER_USE_BOTH);
+        }, ARRAY_FILTER_USE_BOTH);
 
         if (!empty($extra)) {
             $extraAttributes = [];
@@ -156,7 +152,6 @@ class Form implements ExtensionInterface
     /**
      * @param string $name
      * @param array $params
-     *
      * @return string
      */
     public function input(string $name, array $params = []): string
@@ -178,7 +173,6 @@ class Form implements ExtensionInterface
     /**
      * @param string $name
      * @param array $params
-     *
      * @return string
      */
     public function select(string $name, array $params = []): string
@@ -199,7 +193,8 @@ class Form implements ExtensionInterface
             $opt = Utils::format($this->getTemplate('select_option'), ['value' => $k, 'option' => $option]);
 
             if ($params['value'] == $k) {
-                $dom = new \DOMDocument();
+                /** @noinspection PhpUndefinedClassInspection */
+                $dom = new DOMDocument();
 
                 $dom->loadHTML($opt);
 
@@ -234,7 +229,6 @@ class Form implements ExtensionInterface
 
     /**
      * @param string $name
-     *
      * @return string
      */
     protected function getTemplate(string $name): string
@@ -245,8 +239,6 @@ class Form implements ExtensionInterface
     /**
      * @param string $name
      * @param string $template
-     *
-     * @return void
      */
     public function setTemplate(string $name, string $template): void
     {
@@ -254,9 +246,7 @@ class Form implements ExtensionInterface
     }
 
     /**
-     * @var array $array
-     *
-     * @return void
+     * @param array $array
      */
     public function setRequestData(array $array): void
     {
@@ -265,8 +255,6 @@ class Form implements ExtensionInterface
 
     /**
      * @param array $data
-     *
-     * @return void
      */
     public function setDefaultData(array $data): void
     {

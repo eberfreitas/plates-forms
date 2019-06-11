@@ -5,8 +5,7 @@ namespace Zyglab\Plates;
 class Utils
 {
     /**
-     * @var string $string
-     *
+     * @param string $string
      * @return string
      */
     public static function camelize(string $string): string
@@ -15,9 +14,8 @@ class Utils
     }
 
     /**
-     * @var string $template
-     * @var array $vars
-     *
+     * @param string $template
+     * @param array $vars
      * @return string
      */
     public static function format(string $template, array $vars): string
