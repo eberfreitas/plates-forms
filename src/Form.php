@@ -2,10 +2,11 @@
 
 namespace Zyglab\Plates;
 
-use const ARRAY_FILTER_USE_BOTH;
 use DOMDocument;
 use League\Plates\Engine;
 use League\Plates\Extension\ExtensionInterface;
+
+use const ARRAY_FILTER_USE_BOTH;
 
 class Form implements ExtensionInterface
 {
