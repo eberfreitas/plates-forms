@@ -127,7 +127,12 @@ class Form implements ExtensionInterface
             $extraAttributes = [];
 
             foreach ($extra as $k => $v) {
-                $extraAttributes[] = sprintf('%s="%s"', $k, $v);
+                if (is_bool($v)) {
+                    $extraAttributes[] = sprintf('%s', $k);
+                } else {
+                    $extraAttributes[] = sprintf('%s="%s"', $k, $v);
+                }
+
                 unset($params[$k]);
             }
 
