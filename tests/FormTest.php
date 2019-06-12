@@ -106,6 +106,21 @@ class FormTest extends TestCase
         );
     }
 
+    public function testTextarea(): void
+    {
+        $params = [
+            'id' => 'Description',
+            'required' => true,
+        ];
+
+        $textarea = $this->form->textarea('desc', $params);
+
+        $this->assertEquals(
+            '<textarea name="data[desc]" id="Description" class="" required></textarea>',
+            $textarea
+        );
+    }
+
     public function testSelect(): void
     {
         $params = [

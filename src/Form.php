@@ -29,12 +29,13 @@ class Form implements ExtensionInterface
      * @var array
      */
     protected $defaultTemplates = [
-        'label' => '<label for="{id}">{label}</label>',
         'error' => '<div class="errors"><ul>{errors}</ul></div>',
         'error_item' => '<li>{error}</li>',
         'input' => '<input type="{type}" name="data[{name}]" id="{id}" value="{value}" class="{class}"{extra}>',
+        'label' => '<label for="{id}">{label}</label>',
         'select' => '<select name="data[{name}]" id="{id}" class="{class}"{extra}>{options}</select>',
         'select_option' => '<option value="{value}">{option}</option>',
+        'textarea' => '<textarea name="data[{name}]" id="{id}" class="{class}"{extra}>{value}</textarea>'
     ];
 
     /**
@@ -128,7 +129,7 @@ class Form implements ExtensionInterface
             $extraAttributes = [];
 
             foreach ($extra as $k => $v) {
-                if (is_bool($v)) {
+                if (is_bool($v) && $v === true) {
                     $extraAttributes[] = sprintf('%s', $k);
                 } else {
                     $extraAttributes[] = sprintf('%s="%s"', $k, $v);
@@ -174,6 +175,26 @@ class Form implements ExtensionInterface
         $params = $this->makeParams($defaultParams, $params);
 
         return Utils::format($this->getTemplate('input'), $params);
+    }
+
+    /**
+     * @param string $name
+     * @param array $params
+     * @return string
+     */
+    public function textarea(string $name, array $params = []): string
+    {
+        $defaultParams = [
+            'class' => '',
+            'extra' => '',
+            'id' => null,
+            'name' => $name,
+            'value' => null,
+        ];
+
+        $params = $this->makeParams($defaultParams, $params);
+
+        return Utils::format($this->getTemplate('textarea'), $params);
     }
 
     /**
