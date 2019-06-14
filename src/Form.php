@@ -6,7 +6,7 @@ use DOMDocument;
 use League\Plates\Engine;
 use League\Plates\Extension\ExtensionInterface;
 
-use const ARRAY_FILTER_USE_BOTH;
+use const ARRAY_FILTER_USE_KEY;
 
 class Form implements ExtensionInterface
 {
@@ -31,11 +31,12 @@ class Form implements ExtensionInterface
     protected $defaultTemplates = [
         'error' => '<div class="errors"><ul>{errors}</ul></div>',
         'error_item' => '<li>{error}</li>',
-        'input' => '<input type="{type}" name="data[{name}]" id="{id}" value="{value}" class="{class}"{extra}>',
+        'input' => '<input type="{type}" name="{input_name}" id="{id}" value="{value}" class="{class}"{extra}>',
+        'input_name' => 'data[{name}]',
         'label' => '<label for="{id}">{label}</label>',
-        'select' => '<select name="data[{name}]" id="{id}" class="{class}"{extra}>{options}</select>',
+        'select' => '<select name="{input_name}" id="{id}" class="{class}"{extra}>{options}</select>',
         'select_option' => '<option value="{value}">{option}</option>',
-        'textarea' => '<textarea name="data[{name}]" id="{id}" class="{class}"{extra}>{value}</textarea>'
+        'textarea' => '<textarea name="{input_name}" id="{id}" class="{class}"{extra}>{value}</textarea>'
     ];
 
     /**
@@ -121,9 +122,9 @@ class Form implements ExtensionInterface
      */
     protected function makeParams(array $defaultParams, array $params): array
     {
-        $extra = array_filter($params, function($v, $k) use ($defaultParams): bool {
+        $extra = array_filter($params, function($k) use ($defaultParams): bool {
             return !in_array($k, array_keys($defaultParams));
-        }, ARRAY_FILTER_USE_BOTH);
+        }, ARRAY_FILTER_USE_KEY);
 
         if (!empty($extra)) {
             $extraAttributes = [];
@@ -146,6 +147,13 @@ class Form implements ExtensionInterface
         $params['value'] = $this->requestData[$params['name']]
             ?? $this->defaultData[$params['name']]
             ?? $params['value'];
+
+        $params['input_name'] = $params['input_name']
+            ?? Utils::format($this->getTemplate('input_name'), $params);
+
+        if (!empty($params['multiple']) && $params['multiple'] === true) {
+            $params['input_name'] .= '[]';
+        }
 
         if (!empty($this->errors[$params['name']])) {
             $class = explode(' ', $params['class']);
@@ -220,7 +228,6 @@ class Form implements ExtensionInterface
             $opt = Utils::format($this->getTemplate('select_option'), ['value' => $k, 'option' => $option]);
 
             if ($params['value'] == $k) {
-                /** @noinspection PhpUndefinedClassInspection */
                 $dom = new DOMDocument();
 
                 $dom->loadHTML($opt);
