@@ -126,6 +126,8 @@ class Form implements ExtensionInterface
             return !in_array($k, array_keys($defaultParams));
         }, ARRAY_FILTER_USE_KEY);
 
+        $multiple = (bool) ($params['multiple'] ?? false);
+
         if (!empty($extra)) {
             $extraAttributes = [];
 
@@ -151,7 +153,7 @@ class Form implements ExtensionInterface
         $params['input_name'] = $params['input_name']
             ?? Utils::format($this->getTemplate('input_name'), $params);
 
-        if (!empty($params['multiple']) && $params['multiple'] === true) {
+        if ($multiple) {
             $params['input_name'] .= '[]';
         }
 
